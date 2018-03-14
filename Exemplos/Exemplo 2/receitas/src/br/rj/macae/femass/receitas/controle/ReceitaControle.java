@@ -5,7 +5,7 @@
  */
 package br.rj.macae.femass.receitas.controle;
 
-import br.rj.macae.femass.receitas.dao.CategoriaDAO;
+import br.rj.macae.femass.receitas.dao.ReceitaDAO;
 import br.rj.macae.femass.receitas.modelo.Receita;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,19 +25,19 @@ public class ReceitaControle {
         }
     }
     private void cadastrar(Receita r, JList listaReceitas) throws SQLException{
-        CategoriaDAO dao = new CategoriaDAO();
+        ReceitaDAO dao = new ReceitaDAO();
         dao.cadastrar(r);
         List receitas = dao.listarTodos();
         listaReceitas.setListData(receitas.toArray());
     }
     private void alterar(Receita r, JList listaReceitas) throws SQLException{
-        CategoriaDAO dao = new CategoriaDAO();
+        ReceitaDAO dao = new ReceitaDAO();
         dao.alterar(r);
         List receitas = dao.listarTodos();
         listaReceitas.setListData(receitas.toArray());
     }
     public void atualizarListaReceitas(JList listaReceitas) throws SQLException{
-        CategoriaDAO dao = new CategoriaDAO();        
+        ReceitaDAO dao = new ReceitaDAO();        
         List receitas = dao.listarTodos();
         listaReceitas.setListData(receitas.toArray());
     }
