@@ -15,6 +15,17 @@ public class Receita {
     private String nome;
     private String ingredientes;
     private String preparo;
+    private Categoria categoria;
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+        categoria.setReceita(this);
+    }
+    
     
     public Receita(String nome){
         this.setId(0);

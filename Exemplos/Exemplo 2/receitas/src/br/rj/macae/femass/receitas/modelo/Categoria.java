@@ -5,6 +5,10 @@
  */
 package br.rj.macae.femass.receitas.modelo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  *
  * @author anamm
@@ -13,7 +17,22 @@ public class Categoria {
     private int id;
     private String nome;
     private String descricao;
+    private List<Receita> receitas = new ArrayList<Receita>();
 
+    public List<Receita> getReceitas() {
+        return Collections.unmodifiableList(receitas);
+    }
+
+    public void setReceita(Receita receita) {
+        if(receita.getCategoria().equals(this)){
+            if(!this.receitas.contains(receita)){this.receitas.add(receita);}
+        }else{
+            receita.setCategoria(this);
+        }
+    }
+
+    
+    
     public int getId() {
         return id;
     }
@@ -61,6 +80,11 @@ public class Categoria {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return " " + id + " - " + nome + "  (" + descricao + ')';
     }
     
     

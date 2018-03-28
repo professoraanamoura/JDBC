@@ -5,6 +5,14 @@
  */
 package br.rj.macae.femass.receitas.gui;
 
+import br.rj.macae.femass.receitas.controle.CategoriaControle;
+import br.rj.macae.femass.receitas.dao.CategoriaDAO;
+import br.rj.macae.femass.receitas.modelo.Categoria;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 /**
  *
  * @author anamm
@@ -16,6 +24,7 @@ public class CategoriaGUI extends javax.swing.JFrame {
      */
     public CategoriaGUI() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -33,11 +42,16 @@ public class CategoriaGUI extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        txtIngredientes = new javax.swing.JTextArea();
-        lstReceitas3 = new javax.swing.JList();
+        txtDescricao = new javax.swing.JTextArea();
+        lstCategorias = new javax.swing.JList<>();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabel2.setText("Nome:");
 
@@ -63,13 +77,13 @@ public class CategoriaGUI extends javax.swing.JFrame {
 
         jLabel3.setText("Descrição:");
 
-        txtIngredientes.setColumns(20);
-        txtIngredientes.setRows(5);
-        jScrollPane3.setViewportView(txtIngredientes);
+        txtDescricao.setColumns(20);
+        txtDescricao.setRows(5);
+        jScrollPane3.setViewportView(txtDescricao);
 
-        lstReceitas3.addMouseListener(new java.awt.event.MouseAdapter() {
+        lstCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lstReceitas3MouseClicked(evt);
+                lstCategoriasMouseClicked(evt);
             }
         });
 
@@ -98,18 +112,19 @@ public class CategoriaGUI extends javax.swing.JFrame {
                                 .addGap(39, 39, 39)
                                 .addComponent(txtNome))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton3))
-                            .addComponent(lstReceitas3, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 495, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3)))
                 .addGap(23, 23, 23))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lstCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,7 +142,7 @@ public class CategoriaGUI extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jButton3))
                 .addGap(18, 18, 18)
-                .addComponent(lstReceitas3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lstCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap(21, Short.MAX_VALUE))
@@ -146,15 +161,17 @@ public class CategoriaGUI extends javax.swing.JFrame {
             return;
         }
         try{
-            ReceitaControle controle = new ReceitaControle();
-            Receita r = new Receita(txtNome.getText());
-            r.setIngredientes(txtIngredientes.getText());
-            r.setPreparo(txtPreparo.getText());
-            if(lstReceitas.getSelectedIndex()>=0){
-                r.setId(((Receita)lstReceitas.getSelectedValue()).getId());
+            CategoriaControle controle = new CategoriaControle();
+            Categoria c = new Categoria();
+            c.setNome(txtNome.getText());
+            c.setDescricao(txtDescricao.getText());
+            
+            if(lstCategorias.getSelectedIndex()>=0){
+                c.setId((lstCategorias.getSelectedValue()).getId());
             }
-            controle.gravar(r, lstReceitas);
+            controle.gravar(c, lstCategorias);
             limparCampos();
+            atualizarListaCategrias();
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -164,13 +181,20 @@ public class CategoriaGUI extends javax.swing.JFrame {
         limparCampos();
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void lstReceitas3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstReceitas3MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lstReceitas3MouseClicked
+    private void lstCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstCategoriasMouseClicked
+        Categoria c = lstCategorias.getSelectedValue();
+        txtNome.setText(c.getNome());
+        txtDescricao.setText(c.getDescricao());
+        
+    }//GEN-LAST:event_lstCategoriasMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         limparCampos();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        atualizarListaCategrias();
+    }//GEN-LAST:event_formWindowActivated
 
     /**
      * @param args the command line arguments
@@ -214,8 +238,23 @@ public class CategoriaGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JList lstReceitas3;
-    private javax.swing.JTextArea txtIngredientes;
+    private javax.swing.JList<Categoria> lstCategorias;
+    private javax.swing.JTextArea txtDescricao;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
+
+    private void limparCampos() {
+        txtNome.setText("");
+        txtDescricao.setText("");
+    }
+
+    private void atualizarListaCategrias() {
+        CategoriaControle controle = new CategoriaControle();
+        try {
+            controle.atualizarListaCategorias(lstCategorias);
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoriaGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
 }

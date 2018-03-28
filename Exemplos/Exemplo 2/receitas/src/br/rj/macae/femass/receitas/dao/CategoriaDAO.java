@@ -27,7 +27,7 @@ public class CategoriaDAO implements IDAO{
             conn = FabricaConexao.getConexao();
 
             String sql = "insert into categoria (nome,descricao) "
-                    + "values (?,?,?)";
+                    + "values (?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             // preenche os valores         
             stmt.setString(1, categoria.getNome());
@@ -99,7 +99,7 @@ public class CategoriaDAO implements IDAO{
             while (rs.next()) {
                 Categoria categoria = new Categoria();
                 categoria.setNome(rs.getString("nome"));
-                categoria.setDescricao(rs.getString("deescricao"));                
+                categoria.setDescricao(rs.getString("descricao"));                
                 categoria.setId(rs.getInt("id"));
                 lista.add(categoria);
             }
@@ -109,6 +109,7 @@ public class CategoriaDAO implements IDAO{
             conn.close();
             return lista;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SQLException("Eroo ao recuperar a lista de categorias. \n" + e.getMessage());
         }
     }
@@ -134,6 +135,7 @@ public class CategoriaDAO implements IDAO{
             conn.close();
             return categoria;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new SQLException("Eroo ao recuperar a categoria. \n" + e.getMessage());
         }
     }

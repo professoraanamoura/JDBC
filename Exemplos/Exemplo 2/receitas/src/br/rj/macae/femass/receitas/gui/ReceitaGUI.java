@@ -6,10 +6,13 @@
 package br.rj.macae.femass.receitas.gui;
 
 import br.rj.macae.femass.receitas.controle.ReceitaControle;
+import br.rj.macae.femass.receitas.modelo.Categoria;
 import br.rj.macae.femass.receitas.modelo.Receita;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,6 +26,7 @@ public class ReceitaGUI extends javax.swing.JFrame {
      */
     public ReceitaGUI() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -131,9 +135,7 @@ public class ReceitaGUI extends javax.swing.JFrame {
                             .addComponent(jLabel3))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(138, 138, 138))
+                            .addComponent(jLabel4)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel5)
                     .addComponent(cbCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -162,11 +164,9 @@ public class ReceitaGUI extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
@@ -198,12 +198,15 @@ public class ReceitaGUI extends javax.swing.JFrame {
         Receita r = new Receita(txtNome.getText());
         r.setIngredientes(txtIngredientes.getText());
         r.setPreparo(txtPreparo.getText());
+        r.setCategoria((Categoria)cbCategoria.getSelectedItem());
         if(lstReceitas.getSelectedIndex()>=0){
             r.setId(((Receita)lstReceitas.getSelectedValue()).getId());
         }
         controle.gravar(r, lstReceitas);
         limparCampos();
+        atualizarListaReceitas();
         }catch(Exception e){
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -225,12 +228,7 @@ public class ReceitaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_lstReceitasMouseClicked
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        ReceitaControle controle = new ReceitaControle();
-        try {
-            controle.atualizarListaReceitas(lstReceitas);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
+       atualizarListaReceitas();
     }//GEN-LAST:event_formWindowActivated
 
     /**
@@ -269,7 +267,7 @@ public class ReceitaGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> cbCategoria;
+    private javax.swing.JComboBox<Categoria> cbCategoria;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -291,5 +289,30 @@ public class ReceitaGUI extends javax.swing.JFrame {
         txtNome.setText("");
         txtIngredientes.setText("");
         txtPreparo.setText("");
+        atualizarListaCategorias();
+    }
+
+    private void atualizarListaReceitas() {
+         ReceitaControle controle = new ReceitaControle();
+        try {
+            controle.atualizarListaReceitas(lstReceitas);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+
+    private void atualizarListaCategorias() {
+        cbCategoria.removeAllItems();
+        ReceitaControle controle = new ReceitaControle();
+        List categorias;
+        try {
+            categorias = controle.listaCategorias();
+            for(Object o : categorias){
+            cbCategoria.addItem((Categoria) o);
+        }
+        } catch (SQLException ex) {
+            Logger.getLogger(ReceitaGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }
